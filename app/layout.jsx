@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export const metadata = {
-  title: "Sync Board",
+  title: "Sync Board | Coppy and Paste Across Multiple Devices",
   description: "Share your Coppy and Paste with your team or anyone.",
 };
 
