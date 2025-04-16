@@ -10,7 +10,7 @@ export const metadata = {
 
 const poppins = Poppins({
   display: "swap",
-  weight: ["400", "500", "600"],
+  weight: "500",
 });
 
 export default function RootLayout({ children }) {
