@@ -1,25 +1,30 @@
 import BoardList from "@/components/BoardList";
 import { AiFillAppstore } from "react-icons/ai";
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 async function getBoards() {
   try {
-    const boards = await fetch(`${process.env.APP_URL_API}boards`, {
-      cache: "no-cache",
+    const res = await fetch(`${process.env.APP_URL_API}boards`, {
+      cache: "no-store",
     });
 
-    if (!boards.ok) {
+    if (!res.ok) {
       throw new Error("Failed to fetch boards");
     }
 
-    return boards.json();
+    return res.json();
   } catch (error) {
     console.error(error);
+    return { boards: [] };
   }
 }
 
 export default async function Home() {
 
-  const {boards} = await getBoards();
+  const data = await getBoards();
+  const boards = data?.boards || [];
   console.log(boards);
 
   return (
@@ -28,11 +33,15 @@ export default async function Home() {
         <AiFillAppstore />
         All Sync Boards
       </h1>
-      {boards.reverse().map((board)=>{
-        return (
-          <BoardList key={board._id} id={board._id} title={board.title} content={board.content} updated={board.updatedAt}/>
-        )
-      })}
+      {boards.length > 0 ? (
+        boards.reverse().map((board)=>{
+          return (
+            <BoardList key={board._id} id={board._id} title={board.title} content={board.content} updated={board.updatedAt}/>
+          )
+        })
+      ) : (
+        <p className="text-gray-500 mt-4">No boards found.</p>
+      )}
     </div>
   );
 }
