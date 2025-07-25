@@ -1,0 +1,145 @@
+name: ✨ Feature Request
+description: Suggest a new feature or enhancement for Sync Board
+title: "[Feature]: "
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature! ✨
+        
+        Please provide as much detail as possible to help us understand your request.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      description: Please verify these before submitting
+      options:
+        - label: I have searched existing issues to ensure this feature hasn't been requested
+          required: true
+        - label: I have read the Contributing Guidelines
+          required: true
+
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: 🎯 Feature Description
+      description: A clear and concise description of the feature you'd like to see
+      placeholder: Describe the feature...
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem-solution
+    attributes:
+      label: 🔍 Problem or Use Case
+      description: What problem does this feature solve? What use case does it address?
+      placeholder: Explain the problem or use case...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: 💡 Proposed Solution
+      description: How would you like this feature to work?
+      placeholder: Describe your proposed solution...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 🔄 Alternative Solutions
+      description: Have you considered any alternative solutions or workarounds?
+      placeholder: Describe alternatives you've considered...
+
+  - type: dropdown
+    id: feature-type
+    attributes:
+      label: 🏷️ Feature Type
+      description: What type of feature is this?
+      options:
+        - User Interface Enhancement
+        - New Functionality
+        - Performance Improvement
+        - Developer Experience
+        - API Enhancement
+        - Security Feature
+        - Accessibility Feature
+        - Mobile Feature
+        - Integration
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: ⭐ Priority Level
+      description: How important is this feature to you?
+      options:
+        - Low - Nice to have
+        - Medium - Would be helpful
+        - High - Really needed
+        - Critical - Blocking my workflow
+    validations:
+      required: true
+
+  - type: textarea
+    id: user-stories
+    attributes:
+      label: 👤 User Stories
+      description: Write user stories for this feature
+      placeholder: |
+        As a [type of user], I want [feature] so that [benefit].
+        
+        Example:
+        As a developer, I want dark mode so that I can work comfortably in low-light environments.
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: ✅ Acceptance Criteria
+      description: What conditions must be met for this feature to be considered complete?
+      placeholder: |
+        - [ ] Condition 1
+        - [ ] Condition 2
+        - [ ] Condition 3
+
+  - type: textarea
+    id: mockups-examples
+    attributes:
+      label: 🎨 Mockups or Examples
+      description: Any mockups, wireframes, or examples from other applications?
+      placeholder: Drag and drop images or describe examples...
+
+  - type: textarea
+    id: implementation-ideas
+    attributes:
+      label: 🔧 Implementation Ideas
+      description: Do you have any ideas about how this could be implemented?
+      placeholder: Technical implementation suggestions...
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 📝 Additional Context
+      description: Add any other context or information about the feature request
+      placeholder: Any additional information...
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: 🤝 Contribution
+      description: Are you willing to work on this feature?
+      options:
+        - label: I would be willing to implement this feature
+        - label: I would be willing to help with testing
+        - label: I would be willing to help with documentation
+
+  - type: markdown
+    attributes:
+      value: |
+        🚀 **Thank you for helping make Sync Board better!**
