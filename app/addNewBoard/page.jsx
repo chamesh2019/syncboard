@@ -43,8 +43,9 @@ export default function addNewBoard() {
       });
 
       if (!res.ok) {
-        setError("Failed to add board");
-        return;
+          const data = await res.json();
+          setError(data.message);
+        
       }
 
       if (res.ok) {
