@@ -12,6 +12,16 @@ This application serves as a universal clipboard that works across any device wi
 
 Built with modern web technologies, Sync Board offers a clean, responsive interface that works flawlessly on desktop and mobile devices.
 
+## 🔥 Real-time Features
+
+Sync Board now includes **real-time synchronization** powered by Firebase:
+
+- **Live Updates**: See changes instantly across all connected devices
+- **No Refresh Required**: Updates appear automatically without page reloads  
+- **Offline Support**: Continue working even without internet connection
+- **Conflict Resolution**: Firebase handles simultaneous edits gracefully
+- **Real-time Hooks**: Use `useRealtimeBoards` for live data in your components
+
 ## Features
 
 - **Create & Manage Boards**: Create, edit, and delete boards with custom titles and content
@@ -25,8 +35,10 @@ Built with modern web technologies, Sync Board offers a clean, responsive interf
 ## Technologies Used
 
 - **Frontend**: Next.js 15, React, Tailwind CSS
-- **Backend**: Node.js API Routes, MongoDB, Mongoose
-- **Database**: MongoDB Atlas
+- **Backend**: Node.js API Routes, Firebase Firestore
+- **Database**: Firebase Firestore (NoSQL)
+- **Real-time Updates**: Firebase real-time listeners
+- **Authentication**: Firebase Auth (ready for future features)
 - **Styling**: Tailwind CSS for responsive design
 - **Icons**: React Icons
 - **Development**: ESLint for code quality
@@ -35,7 +47,7 @@ Built with modern web technologies, Sync Board offers a clean, responsive interf
 
 ### Prerequisites
 - Node.js (v18 or higher)
-- MongoDB Atlas account or local MongoDB installation
+- Firebase project (free tier available)
 - Git
 
 ### Getting Started
@@ -51,14 +63,23 @@ Built with modern web technologies, Sync Board offers a clean, responsive interf
    npm install
    ```
 
-3. **Set up environment variables:**
-   Create a `.env` file in the root directory and add the following:
+3. **Set up Firebase:**
+   - Create a new project at [Firebase Console](https://console.firebase.google.com/)
+   - Enable Firestore Database
+   - Copy your Firebase configuration from Project Settings
+
+4. **Set up environment variables:**
+   Create a `.env.local` file in the root directory and add the following:
    ```env
-   MONGO_URI=<your-mongodb-connection-string>
-   APP_URL_API=http://localhost:3000/api/
+   NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+   NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+   NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
    ```
    
-   **Note**: Replace `<your-mongodb-connection-string>` with your actual MongoDB connection string.
+   **Note**: Replace the values with your actual Firebase configuration.
 
 4. **Start the development server:**
    ```bash
@@ -67,6 +88,21 @@ Built with modern web technologies, Sync Board offers a clean, responsive interf
 
 5. **Open the application:**
    Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
+
+## 🔄 Migration from MongoDB Version
+
+If you're upgrading from Sync Board v1.0.0 (MongoDB version), please follow the [Firebase Migration Guide](FIREBASE_MIGRATION.md) for a complete step-by-step migration process.
+
+## Features
+
+- **Create & Manage Boards**: Create, edit, and delete boards with custom titles and content
+- **Cross-Device Sync**: Access your boards from any device with internet connection
+- **Real-time Updates**: Live synchronization across all devices using Firebase listeners
+- **Instant Sharing**: Share boards with unique links for easy collaboration
+- **Seamless Copy/Paste**: Copy and paste content effortlessly across devices
+- **Responsive Design**: Optimized for desktop, tablet, and mobile devices
+- **Clean Interface**: Intuitive and user-friendly design for better productivity
+- **Offline Ready**: Firebase provides offline persistence for better user experience
 
 ## Development
 
@@ -82,13 +118,17 @@ Built with modern web technologies, Sync Board offers a clean, responsive interf
 ```
 syncboard/
 ├── app/                    # Next.js App Router
-│   ├── api/               # API routes
+│   ├── api/               # API routes (Firebase integration)
 │   ├── addNewBoard/       # Add board page
 │   ├── editBoard/         # Edit board pages
 │   └── globals.css        # Global styles
 ├── components/            # Reusable React components
+├── hooks/                 # Custom React hooks
+│   ├── useFirebaseBoards.js   # Firebase CRUD operations
+│   └── useRealtimeBoards.js   # Real-time Firebase listeners
 ├── libs/                  # Utility libraries
-├── models/                # MongoDB models
+│   ├── firebase.js        # Firebase configuration
+│   └── firebaseService.js # Firebase service layer
 └── public/               # Static assets
 ```
 
@@ -104,12 +144,19 @@ syncboard/
 
 The application can be deployed on various platforms:
 
-- **Vercel** (Recommended for Next.js)
-- **Netlify**
-- **Railway**
-- **Heroku**
+- **Vercel** (Recommended for Next.js) - Automatically detects Firebase environment variables
+- **Netlify** - Configure Firebase environment variables in build settings
+- **Railway** - Set up Firebase configuration in environment variables
+- **Firebase Hosting** - Native Firebase hosting with seamless integration
 
-Make sure to set up your environment variables in your deployment platform.
+### Firebase Configuration for Deployment
+Make sure to set up your Firebase environment variables in your deployment platform:
+- `NEXT_PUBLIC_FIREBASE_API_KEY`
+- `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`
+- `NEXT_PUBLIC_FIREBASE_PROJECT_ID`
+- `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`
+- `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`
+- `NEXT_PUBLIC_FIREBASE_APP_ID`
 
 ## License
 

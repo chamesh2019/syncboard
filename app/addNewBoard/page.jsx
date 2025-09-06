@@ -56,10 +56,6 @@ export default function addNewBoard() {
     }
   };
 
-  useEffect(() => {
-    let autoTitle = content.slice(0, 20);
-    setTitle(autoTitle);
-  })
 
   const handleTextAreaChange = (e) => {
     setContent(e.target.value);
@@ -76,6 +72,9 @@ export default function addNewBoard() {
     }
     navigator.clipboard.readText().then((text) => {
       setContent(text);
+
+      let autoTitle = text.slice(0, 20);
+      setTitle(autoTitle);
     });
   };
 
