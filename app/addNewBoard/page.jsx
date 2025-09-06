@@ -4,14 +4,17 @@ import Success from "@/components/Success";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { AiTwotoneThunderbolt } from "react-icons/ai";
+import useFirebaseBoards from "@/hooks/useFirebaseBoards";
 
 export default function addNewBoard() {
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const router = useRouter();
+  const { createBoard } = useFirebaseBoards();
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -30,31 +33,26 @@ export default function addNewBoard() {
       return;
     }
 
+    setIsSubmitting(true);
+    setError("");
+
     try {
-      const res = await fetch(`api/boards`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title,
-          content,
-        }),
-      });
-
-      if (!res.ok) {
-        setError("Failed to add board");
-        return;
-      }
-
-      if (res.ok) {
-        router.push("/addNewBoard");
-        setSuccess("Board Created Successfuly");
-        setTitle("");
-        setContent("");
-      }
+      await createBoard({ title, content });
+      setSuccess("Board added successfully!");
+      
+      // Reset form
+      setTitle("");
+      setContent("");
+      
+      // Redirect after a short delay
+      setTimeout(() => {
+        router.push("/");
+      }, 1500);
     } catch (error) {
-      console.error(error);
+      console.error("Error creating board:", error);
+      setError("Failed to add board");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -127,14 +125,16 @@ export default function addNewBoard() {
         <div className="flex gap-2 mt-4">
           <button
             type="submit"
-            className="bg-purple-500 text-slate-50 px-4 py-2 rounded-md hover:bg-purple-600 transition-all"
+            disabled={isSubmitting}
+            className="bg-purple-500 text-slate-50 px-4 py-2 rounded-md hover:bg-purple-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Add Board
+            {isSubmitting ? "Adding..." : "Add Board"}
           </button>
           <button
             onClick={() => handlePasteSubmit()}
             type="button"
-            className="bg-yellow-500 animate-pulse flex gap-2 items-center text-slate-50 px-4 py-2 rounded-md hover:bg-yellow-600 transition-all"
+            disabled={isSubmitting}
+            className="bg-yellow-500 animate-pulse flex gap-2 items-center text-slate-50 px-4 py-2 rounded-md hover:bg-yellow-600 transition-all disabled:opacity-50"
           >
             <AiTwotoneThunderbolt /> <span>Paste Content</span>
           </button>

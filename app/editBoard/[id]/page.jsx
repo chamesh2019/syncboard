@@ -2,43 +2,44 @@
 import Error from "@/components/Error";
 import Success from "@/components/Success";
 import React, { useEffect, useState } from "react";
+import useFirebaseBoards from "@/hooks/useFirebaseBoards";
+import { useRouter } from "next/navigation";
 
 export default function editBoard({ params }) {
   const { id } = React.use(params);
+  const router = useRouter();
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { getBoardById, updateBoard } = useFirebaseBoards();
 
   useEffect(() => {
     async function getBoard() {
       try {
-        const board = await fetch(`/api/boards?id=${id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          cache: "no-cache",
-        });
-        const boardData = await board.json();
+        setIsLoading(true);
+        const boardData = await getBoardById(id);
 
-        if (!board.ok) {
-          setError("Failed to get board");
+        if (!boardData) {
+          setError("Board not found");
           return;
         }
 
-        if (boardData) {
-          setTitle(boardData.board.title);
-          setContent(boardData.board.content);
-        }
+        setTitle(boardData.title);
+        setContent(boardData.content);
       } catch (error) {
         console.error(error);
         setError("Failed to get board. Try Again");
+      } finally {
+        setIsLoading(false);
       }
     }
     getBoard();
-  }, [id]);
+  }, [id, getBoardById]);
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -52,29 +53,27 @@ export default function editBoard({ params }) {
       return;
     }
 
+    if (title.length > 20) {
+      setError("Title is too long");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError("");
+
     try {
-      const res = await fetch(`/api/boards?id=${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          newTitle: title,
-          newContent: content,
-        }),
-      });
-
-      if (!res.ok) {
-        setError("Failed to update board");
-        return;
-      }
-
-      if (res.ok) {
-        setSuccess("Board Updated Successfuly");
-      }
+      await updateBoard(id, { title, content });
+      setSuccess("Board Updated Successfully!");
+      
+      // Redirect after a short delay
+      setTimeout(() => {
+        router.push("/");
+      }, 1500);
     } catch (error) {
-      console.error;
+      console.error("Error updating board:", error);
       setError("Failed to update board. Try Again");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -82,6 +81,20 @@ export default function editBoard({ params }) {
     setError("");
     setSuccess("");
   }, 8000);
+
+  if (isLoading) {
+    return (
+      <section className="max-w-[1200px] mx-auto mt-8">
+        <h2 className="text-4xl font-bold flex items-center gap-4 text-slate-900">
+          Edit Board
+        </h2>
+        <div className="flex justify-center items-center mt-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          <span className="ml-3 text-gray-600">Loading board...</span>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="max-w-[1200px] mx-auto mt-8">
@@ -121,9 +134,10 @@ export default function editBoard({ params }) {
         <div className="mt-8">
           <button
             type="submit"
-            className="bg-purple-500 text-slate-50 px-4 py-2 rounded-md hover:bg-purple-600 transition-all"
+            disabled={isSubmitting}
+            className="bg-purple-500 text-slate-50 px-4 py-2 rounded-md hover:bg-purple-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Update Board
+            {isSubmitting ? "Updating..." : "Update Board"}
           </button>
         </div>
       </form>

@@ -1,0 +1,16 @@
+rules_version='2'
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow read and write access to all boards for everyone
+    // This is suitable for a public sync board application
+    match /boards/{boardId} {
+      allow read, write: if true;
+    }
+    
+    // Deny access to any other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

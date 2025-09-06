@@ -11,18 +11,32 @@ import PopUp from "./PopUp";
 import Success from "./Success";
 import Error from "./Error";
 import { useRouter } from "next/navigation";
+import useFirebaseBoards from "@/hooks/useFirebaseBoards";
 
 export default function BoardList({ id, title, content, updated }) {
-  const date = new Date(updated);
+  // Handle both Firestore timestamp and Date objects
+  let date;
+  if (updated && typeof updated.toDate === 'function') {
+    // Firestore timestamp
+    date = updated.toDate();
+  } else if (updated) {
+    // Regular date string or Date object
+    date = new Date(updated);
+  } else {
+    date = new Date();
+  }
+  
   const updatedDate = date.toDateString();
   const updatedTime = date.toLocaleTimeString();
   const updatedFullDate = `${updatedDate} at ${updatedTime}`;
 
   const router = useRouter();
+  const { deleteBoard } = useFirebaseBoards();
 
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleCopy = (content) => {
     navigator.clipboard.writeText(content);
@@ -44,30 +58,21 @@ export default function BoardList({ id, title, content, updated }) {
   };
 
   const handleDelete = async (id) => {
-    try {
-      const res = await fetch(`/api/boards?id=${id}`, {
-        method: "DELETE",
-      });
-
-      if (!res.ok) {
-        setError("Failed to delete board");
-        return;
-      }
-      if(res.status === 404) {
-        setError("Board not found");
-        return;
-      }
-      if(res.status){
-        setSuccess("Board deleted successfully");
-        router.refresh();
-        return;
-      }
-      setError("Failed to delete board");
-    } catch (error) {
-      setError("Failed to delete board");
-      console.error(error);
+    if (!confirm("Are you sure you want to delete this board?")) {
+      return;
     }
-  }
+    
+    setIsDeleting(true);
+    try {
+      await deleteBoard(id);
+      setSuccess("Board deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting board:", error);
+      setError("Failed to delete board");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   setTimeout(() => {
     setMessage("");
@@ -107,8 +112,16 @@ export default function BoardList({ id, title, content, updated }) {
               <Link href={`/editBoard/${id}`}>
                 <AiFillEdit size={32} className="hover:text-yellow-500" />
               </Link>
-              <button title="Double Click to Delete" onDoubleClick={() => handleDelete(id)}>
-                <AiFillDelete size={32} className="hover:text-red-500" />
+              <button 
+                title="Double Click to Delete" 
+                onDoubleClick={() => handleDelete(id)}
+                disabled={isDeleting}
+                className={isDeleting ? "opacity-50 cursor-not-allowed" : ""}
+              >
+                <AiFillDelete 
+                  size={32} 
+                  className={`hover:text-red-500 ${isDeleting ? 'animate-spin' : ''}`} 
+                />
               </button>
             </div>
             <p className="text-xs text-end">{updatedFullDate}</p>
