@@ -77,10 +77,17 @@ export default function editBoard({ params }) {
     }
   };
 
-  setTimeout(() => {
-    setError("");
-    setSuccess("");
-  }, 8000);
+  // Clear error and success messages after 8 seconds
+  useEffect(() => {
+    if (error || success) {
+      const timer = setTimeout(() => {
+        setError("");
+        setSuccess("");
+      }, 8000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [error, success]);
 
   if (isLoading) {
     return (

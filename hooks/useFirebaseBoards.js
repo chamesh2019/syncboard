@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
   collection, 
   addDoc, 
@@ -106,7 +106,7 @@ export function useFirebaseBoards() {
   };
 
   // Get a single board by ID
-  const getBoardById = async (boardId) => {
+  const getBoardById = useCallback(async (boardId) => {
     try {
       const docRef = doc(db, COLLECTION_NAME, boardId);
       const docSnap = await getDoc(docRef);
@@ -123,10 +123,10 @@ export function useFirebaseBoards() {
       console.error('Error fetching board:', error);
       throw new Error('Failed to fetch board');
     }
-  };
+  }, []);
 
   // Update a board
-  const updateBoard = async (boardId, updateData) => {
+  const updateBoard = useCallback(async (boardId, updateData) => {
     try {
       const { title, content } = updateData;
       const docRef = doc(db, COLLECTION_NAME, boardId);
@@ -140,7 +140,7 @@ export function useFirebaseBoards() {
       console.error('Error updating board:', error);
       throw new Error('Failed to update board');
     }
-  };
+  }, []);
 
   // Delete a board
   const deleteBoard = async (boardId) => {
